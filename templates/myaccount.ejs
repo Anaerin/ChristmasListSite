@@ -1,0 +1,12 @@
+<%- include("partials/header", {title:"My Account"}); %>
+<% if (locals.errorMessage) { %><div class="errormessage"><%=errorMessage%></div><% } %>
+<div class="myaccountForm">
+<form method="POST">
+	<label for="userName">Name</label><input type="text" id="userName" name="userName" value="<%=user.name%>" required>
+	<label for="oldPassword">Old Password</label><input type="password" id="oldPassword" name="oldPassword" value="<%=locals?.oldPassword%>">
+	<label for="newPassword">New Password</label><input type="password" id="newPassword" name="newPassword" value="<%=locals?.newPassword%>">
+	<label for="newPasswordAgain">New Password Again</label><input type="password" id="newPasswordAgain" name="newPasswordAgain" value="<%=locals?.newPasswordAgain%>">
+	<input type="submit">
+</form>
+</div>
+<%- include("partials/footer"); %>

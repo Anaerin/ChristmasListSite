@@ -1,0 +1,41 @@
+import Sequelize from "sequelize";
+import config from "../config.js";
+// Build our Database instance. You will probably want to change this to something more robust.
+/* const sqlSetup = {
+	dialect: "sqlite",
+	storage: "forum.sqlite",
+	logging: false//(...msg) => console.log(msg)
+}; */
+const sqlSetup = config.sqlSetup;
+sqlSetup.logging = false;//(...msg) => console.log(msg)
+export const sequelize = new Sequelize(sqlSetup);
+sequelize.authenticate();
+
+// Let's have somewhere to store the data models we're using.
+let models = {};
+
+// Import all the DB objects
+import User from "./models/user.js";
+models.User = User;
+
+import Site from "./models/site.js";
+models.Site = Site;
+
+import Item from "./models/item.js";
+models.Item = Item;
+
+// Make sure we do this first, to get all the models initialized.
+for (let model in models) {
+	models[model].init(sequelize);
+}
+
+// Only once they're all initialized (and Sequelize knows about them) can we set up the relations.
+for (let model in models) {
+	if (models[model].relation) models[model].relation(sequelize.models);
+}
+await sequelize.sync({
+	alter: false
+});
+
+export default models;
+export const Op = Sequelize.Op;

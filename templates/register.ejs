@@ -1,0 +1,13 @@
+<%- include("partials/header", {title:"Register"}); %>
+<% if (locals.errorMessage) { %><div class="errormessage"><%=errorMessage%></div><% } %>
+<div class="registerForm">
+<form method="POST">
+	<label for="userName">Name</label><input type="text" id="userName" name="userName" value="<%=locals?.userName%>" required>
+	<label for="password">Password</label><input type="password" id="password" name="password" value="<%=locals?.password%>" required>
+	<% if (locals.previous) { %>
+	<input type="hidden" name="previous" value="<%=previous%>">
+	<% } %>
+	<input type="submit">
+</form>
+</div>
+<%- include("partials/footer"); %>

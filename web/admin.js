@@ -33,27 +33,29 @@ adminRouter.post("/admin", async (req, res, next) => {
 		const age = config.timeUntilLock - (Math.floor((Date.now() - new Date(item.lastUpdated)) / 1000));
 		if (age > 0 && !item.ClaimedById) {
 			let isDirty = false;
-			[["itemName", "name"], ["itemDescription", "description"], ["itemURL", "URL"], ["itemPrice", "price"]].forEach((field) => {
-				if (req.body[`${field[0]}.${item.id}`] && req.body[`${field[0]}.${item.id}`] !== item[field[1]]) {
-					if (field[0] == "itemPrice") {
-						if (parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10) == item.price) return;
-						else {
-							item.price = parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10);
+			if (req.body[`itemName.${item.id}]`] && req.body[`itemDescription.${item.id}`]) {
+				[["itemName", "name"], ["itemDescription", "description"], ["itemURL", "URL"], ["itemPrice", "price"]].forEach((field) => {
+					if (req.body[`${field[0]}.${item.id}`] && req.body[`${field[0]}.${item.id}`] !== item[field[1]]) {
+						if (field[0] == "itemPrice") {
+							if (parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10) == item.price) return;
+							else {
+								item.price = parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10);
+							}
+						} else {
+							item[field[1]] = req.body[`${field[0]}.${item.id}`];
 						}
-					} else {
-						item[field[1]] = req.body[`${field[0]}.${item.id}`];
-					}
-					isDirty = true;
+						isDirty = true;
 
-					item.lastUpdated = Date.now();
-				}
-				// If it had a value, but no longer does.
-				if (item[field[1]] && !req.body[`${field[0]}.${item.id}`]) {
-					item[field[1]] = null;
-					isDirty = true;
-					item.lastUpdated = Date.now();
-				}
-			});
+						item.lastUpdated = Date.now();
+					}
+					// If it had a value, but no longer does.
+					if (item[field[1]] && !req.body[`${field[0]}.${item.id}`]) {
+						item[field[1]] = null;
+						isDirty = true;
+						item.lastUpdated = Date.now();
+					}
+				});
+			}
 			if (req.body[`itemDelete.${item.id}`]) await item.destroy();
 			else if (isDirty) await item.save();
 		}
@@ -67,15 +69,20 @@ adminRouter.post("/admin", async (req, res, next) => {
 		});
 	}
 	if (req.body.siteName && req.body.siteName !== siteObj.siteName) siteObj.siteName = req.body.siteName;
-	if (req.body.subDomain && String(req.body.subDomain).toLowerCase() !== String(siteObj.subDomain).toLowerCase()) siteObj.subDomain = String(req.body.subDomain).toLowerCase();
+	if (
+		req.body.subDomain && 
+		String(req.body.subDomain).toLowerCase() !== String(siteObj.subDomain).toLowerCase() && 
+		!res.app.locals.siteList.find((el) => String(el.subDomain).toLowerCase() === String(req.body.subDomain))
+	) siteObj.subDomain = String(req.body.subDomain).toLowerCase();
 	if (req.body.viewPassword && req.body.viewPassword !== siteObj.viewPassword) siteObj.viewPassword = req.body.viewPassword;
+	else if (!req.body.viewPassword && siteObj.viewPassword) siteObj.viewPassword = "";
 	await siteObj.save();
 	await siteObj.reload();
 	siteObj.Items.forEach((item) => {
 		item.age = config.timeUntilLock - (Math.floor((Date.now() - new Date(item.lastUpdated)) / 1000));
 		item.agePretty = agePretty(item.age);
 	});
-	req.app.locals.siteList = await db.Site.findAll({ raw: true });
+	res.app.locals.siteList = await db.Site.findAll({ raw: true });
 	res.locals.site = siteObj;
 	res.render("listadmin");
 });

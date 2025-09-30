@@ -170,9 +170,6 @@ function checkUser(req, res) {
 			URLBuilder.searchParams.append("previous", redirectURL.href);
 			res.redirect(URLBuilder.href);
 		} else {
-			console.warn(`Missing URL?`);
-			console.info(res.app.locals.baseURL);
-			console.info(req.originalUrl);
 			res.locals.error = `Previous URL is not under ${res.app.locals.baseURL}: ${req.originalUrl}`;
 			res.render("error");
 		}

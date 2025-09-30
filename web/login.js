@@ -7,7 +7,7 @@ const loginRouter = express.Router();
 
 loginRouter.get("/login", (req, res) => {
 	if (req.query.previous) {
-		const previousURL = new URL(req.query.previous, `https://${req.host}/`);
+		const previousURL = new URL(req.query.previous, `https://${req.app.locals.baseURL}/`);
 		
 		// Prevent XSS attacks by stripping out all hostnames etc and returning a relative path.
 		res.locals.previous = previousURL.pathname;
@@ -34,8 +34,9 @@ loginRouter.post("/login", async (req, res) => {
 	if (foundUser) {
 		req.session.userId = foundUser.id;
 		req.session.user = foundUser;
+		res.setHeader("Logged-In-As", foundUser.id);
 		if (req.body.previous) {
-			const previousURL = new URL(req.body.previous, `https://${req.host}/`);
+			const previousURL = new URL(req.body.previous, `https://${req.app.locals.baseURL}/`);
 			// Prevent XSS attacks by stripping out all hostnames etc and returning a relative path.
 			res.locals.previous = previousURL.pathname;
 			if (previousURL.search) res.locals.previous += `?${previousURL.search}`;			
@@ -52,7 +53,7 @@ if (config.registrationEnabled) {
 		if (req.session.userName) res.locals.userName = req.session.userName;
 		if (req.session.password) res.locals.password = req.session.password;
 		if (req.query.previous) {
-			const previousURL = new URL(req.query.previous, `https://${req.host}/`);
+			const previousURL = new URL(req.query.previous, `https://${req.app.locals.baseURL}/`);
 			
 			// Prevent XSS attacks by stripping out all hostnames etc and returning a relative path.
 			res.locals.previous = previousURL.pathname;
@@ -92,7 +93,29 @@ if (config.registrationEnabled) {
 }
 loginRouter.get("/myaccount", async (req, res) => {
 	if (checkUser(req, res)) {
-		res.render("myaccount");
+		const userEntry = await db.User.findByPk(req.session.userId, { include: db.Site });
+		res.locals.user = userEntry;
+		const URLBuilder = new URL("https://localhost/admin");
+		URLBuilder.host = req.headers.host; // To get the port number as well
+		URLBuilder.hostname = res.app.locals.baseURL;
+		URLBuilder.protocol = req.protocol;
+		URLBuilder.pathname = "/admin";
+		res.locals.AdminSiteURL = URLBuilder.href;
+		if (req.query.claim) {
+			const userSite = await userEntry.getSite();
+			if (userSite) res.redirect(res.locals.AdminSiteURL);
+			else {
+				await userEntry.createSite({
+					siteName: userEntry.name,
+					subDomain: String(userEntry.name).toLowerCase()
+				});
+				let siteList = await db.Site.findAll({ raw: true });
+				res.app.locals.siteList = siteList;
+				res.redirect(res.locals.AdminSiteURL);
+			}
+		} else {
+			res.render("myaccount");
+		}
 	}
 });
 loginRouter.post("/myaccount", async (req, res) => {
@@ -133,20 +156,40 @@ loginRouter.get("/logout", async (req, res) => {
 });
 function checkUser(req, res) {
 	if (!req.session.userId) {
-		const redirectURL = new URL(req.originalUrl, `https://${req.host}/`);
-		if (redirectURL.hostname == req.hostname) {
-			let redirectTo = URL.pathname;
-			if (URL.search) redirectTo += URL.search;
-			res.redirect("/login?previous=" + encodeURIComponent(redirectTo));
-		} else res.redirect("/login");
+		const redirectURL = new URL(`https://localhost/`);
+		redirectURL.host = req.headers.host; // To get the port number as well
+		redirectURL.hostname = req.hostname;
+		redirectURL.protocol = req.protocol;
+		redirectURL.pathname = req.originalUrl;
+		const URLBuilder = new URL("https://localhost/admin");
+		URLBuilder.host = req.headers.host; // To get the port number as well
+		URLBuilder.hostname = res.app.locals.baseURL;
+		URLBuilder.protocol = req.protocol;
+		URLBuilder.pathname = "/login";
+		if (redirectURL.hostname.endsWith(req.app.locals.baseURL)) {
+			URLBuilder.searchParams.append("previous", redirectURL.href);
+			res.redirect(URLBuilder.href);
+		} else {
+			console.warn(`Missing URL?`);
+			console.info(res.app.locals.baseURL);
+			console.info(req.originalUrl);
+			res.locals.error = `Previous URL is not under ${res.app.locals.baseURL}: ${req.originalUrl}`;
+			res.render("error");
+		}
 		return false;
-	} else return true;
+	} else {
+		let mySite = res.app.locals.siteList.find((el) => el.UserId == req.session.userId);
+		if (mySite) res.locals.hasClaimedSite = true;		
+		return true;
+	}
 }
 async function checkLogin(req, res, next) {
 	if (checkUser(req, res)) {
+		res.setHeader("GotUserID", req.session.userId);
 		const userEntry = await db.User.findByPk(req.session.userId);
 		res.locals.user = userEntry;
+		res.locals.userId = req.session.userId;
 		next();
-	}
+	} 
 }
 export { loginRouter, checkLogin };

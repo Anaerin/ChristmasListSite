@@ -6,17 +6,18 @@ let configFileDirty = true;
 let hasConfig = false;
 // set up default values.
 let config = {
-	domainLength: 3,
 	sqlSetup: {
 		dialect: "sqlite",
 		storage: "lists.sqlite"
 	},
-	adminDomain: "giftlistadmin",
 	trustProxy: true,
+	siteHeader: "Gift List Site",
 	passwordSalt: "Something secure to add to the password for randomness",
 	passwordHashLength: 128,
 	sessionPassword: "A secure option for the session",
-	registrationEnabled: true
+	registrationEnabled: true,
+	baseURL: "example.com",
+	timeUntilLock: 604800 //seconds until items locked. 7 days.
 };
 
 // If we have a config file...
@@ -78,4 +79,5 @@ if (configFileDirty) {
 	// We're back in sync.
 	configFileDirty = false;
 }
+config.domainLength = (config.baseURL.split(".").length);
 export default config;

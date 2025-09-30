@@ -1,0 +1,8 @@
+<%- include("partials/header", {title:"Site List Page"}); %>
+Currently available gift lists:
+<ul>
+<% locals.siteList.forEach(function(element) { %>
+<li class="siteEntry"><a href="<%=element.fullURL%>"><%=element.siteName%></a></li>
+<% }); %>
+</ul>
+<%- include("partials/footer"); %>

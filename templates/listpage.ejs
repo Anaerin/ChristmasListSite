@@ -1,3 +1,57 @@
-<%- include("partials/header", {title:"List Page"}); %>
-Lists and stuff
+<%- include("partials/header", { title:locals.site.siteName }) %>
+<ul class="itemList">
+<% locals.site.Items.forEach((item) => { %>
+	<li>
+		<label>Name:</label>
+		<% if (item.URL) { %>
+			<a href="<%=item.URL%>"><%=item.name%></a>
+		<% } else { %>
+			<div class="itemName"><%=item.name%></div>
+		<% } %>
+		<% if (item.description) { %>
+			<label>Description:</label>
+			<div class="itemDescription"><%=item.description%></div>
+		<% } %>
+		<% if (item.price) { %>
+			<label>Price:</label>
+			<span class="itemPrice">$<%=(parseInt(item.price)/100).toFixed(2)%></span>
+		<% } %>
+		<div class="actionButtons">
+			<div class="claim">
+			<% if (item.ClaimedById) { %>
+				<% if (item.ClaimedById == locals.userId) { %>
+					Claimed by you<% if (!item.PurchasedById) { %><a href="/itemAction?action=unclaim&itemId=<%=item.id%>">Unclaim</a><% } %>
+				<% } else { %>
+					Claimed by <%=item.ClaimedBy.name%>
+				<% } %>
+			<% } else { %>
+				<a href="/itemAction?action=claim&itemId=<%=item.id%>">Claim</a>
+			<% } %>
+			</div>
+			<div class="purchase">
+			<% if (item.PurchasedById) { %>
+				<% if (item.PurchasedById == locals.userId) { %>
+					Purchased by you<% if (!item.ShippedById) { %><a href="/itemAction?action=unpurchase&itemId=<%=item.id%>">Un-purchase</a><% } %>
+				<% } else { %>
+					Purchased by <%=item.PurchasedBy.name%>
+				<% } %>
+			<% } else if (item.ClaimedById == locals.userId) { %>
+				<a href="/itemAction?action=purchase&itemId=<%=item.id%>">Mark as Purchased</a>
+			<% } %>
+			</div>
+			<div class="ship">
+			<% if (item.ShippedById) { %>
+				<% if (item.ShippedById == locals.userId) { %>
+						Shipped by you<a href="/itemAction?action=unship&itemId=<%=item.id%>">Un-ship</a>
+				<% } else { %>
+					Shipped by <%=item.ShippedBy.name%>
+				<% } %>
+			<% } else if (item.PurchasedById == locals.userId) { %>
+				<a href="/itemAction?action=ship&itemId=<%=item.id%>">Mark as Shipped</a>
+			<% } %>
+			</div>
+		</div>
+	</li>
+<% }) %>
+</ul>
 <%- include("partials/footer"); %>

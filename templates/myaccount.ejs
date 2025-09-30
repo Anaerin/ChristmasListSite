@@ -8,5 +8,10 @@
 	<label for="newPasswordAgain">New Password Again</label><input type="password" id="newPasswordAgain" name="newPasswordAgain" value="<%=locals?.newPasswordAgain%>">
 	<input type="submit">
 </form>
+<% if (user.Site) { %>
+	<a href="<%=AdminSiteURL%>">Edit your site</a>
+<% } else { %>
+	<a href="/myaccount?claim=true">Claim your site</a>
+<% } %>
 </div>
 <%- include("partials/footer"); %>

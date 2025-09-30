@@ -1,3 +1,35 @@
 <%- include("partials/header", {title:"List Admin"}); %>
-Edit yo list!
+<div class="listAdminForm">
+	<form method="POST">
+		<label for="siteName">List Name</label><input type="text" name="siteName" id="siteName" <% if (site.siteName) { %>value="<%=site.siteName%>"<% } %>>
+		<label for="subDomain">Sub Domain</label><input type="text" name="subDomain" id="subDomain" <% if (site.subDomain) { %>value="<%=site.subDomain%>"<% } %>>
+		<label for="viewPassword">View Password</label><input type="text" name="viewPassword" id="viewPassword" <% if (site.viewPassword) { %>value="<%=site.viewPassword%>"<% } %>>
+		<% for (let i=0; i<site.Items.length; i++) {%>
+		<fieldset class="listAdminItem">
+			<% if (site.Items[i].age > 0 && !site.Items[i].ClaimedById) { %>
+				<legend>Edit Item (<%=site.Items[i].agePretty%> until lock)</legend>
+			<label for="itemName.<%=site.Items[i].id%>">Name</label><input type="text" name="itemName.<%=site.Items[i].id%>" id="itemName.<%=site.Items[i].id%>" value="<%=site.Items[i].name%>">
+			<label for="itemDescription.<%=site.Items[i].id%>">Description</label><input type="text" name="itemDescription.<%=site.Items[i].id%>" id="itemDescription.<%=site.Items[i].id%>" value="<%=site.Items[i].description%>">
+			<label for="itemURL.<%=site.Items[i].id%>">URL</label><input type="url" name="itemURL.<%=site.Items[i].id%>" id="itemURL.<%=site.Items[i].id%>" value="<%=site.Items[i].URL%>">
+			<label for="itemPrice.<%=site.Items[i].id%>">Price</label><input type="text" name="itemPrice.<%=site.Items[i].id%>" id="itemPrice.<%=site.Items[i].id%>" value="<% if (site.Items[i].price) { %><%=((site.Items[i].price)/100).toFixed(2) %><% } %>" pattern="\d*(\.\d{2})?">
+			<label for="itemDelete.<%=site.Items[i].id%>">Delete</label><input type="checkbox" name="itemDelete.<%=site.Items[i].id%>" id="itemDelete.<%=site.Items[i].id%>" value="true">
+			<% } else { %>
+				<legend>View Item</legend>
+			<label for="itemName.<%=site.Items[i].id%>">Name</label><span class="input"><%=site.Items[i].name%></span>
+			<label for="itemDescription.<%=site.Items[i].id%>">Description</label><span class="input"><%=site.Items[i].description%></span>
+			<label for="itemURL.<%=site.Items[i].id%>">URL</label><span class="input"><%=site.Items[i].URL%></span>
+			<label for="itemPrice.<%=site.Items[i].id%>">Price</label><span class="input"><% if (site.Items[i].price) { %><%=((site.Items[i].price)/100).toFixed(2)%><%}%></span>
+			<% } %>
+		</fieldset>
+		<% } %>
+		<fieldset class="listAdminItem">
+			<legend>Add an Item</legend>
+			<label for="itemName.NEW">Name</label><input type="text" name="itemName.NEW" id="itemName.NEW" value="">
+			<label for="itemDescription.NEW">Description</label><input type="text" name="itemDescription.NEW" id="itemDescription.NEW" value="">
+			<label for="itemURL.NEW">URL</label><input type="url" name="itemURL.NEW" id="itemURL.NEW" value="">
+			<label for="itemPrice.NEW">Price</label><input type="number" name="itemPrice.NEW" id="itemPrice.NEW" value="" step="0.01">
+		</fieldset>
+		<input type="submit">
+	</form>
+</div>
 <%- include("partials/footer"); %>

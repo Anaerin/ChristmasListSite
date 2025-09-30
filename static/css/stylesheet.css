@@ -1,0 +1,95 @@
+body {
+	font-family: sans-serif;
+	margin: 0;
+}
+body header {
+	background-color: #ccc;
+	display: grid;
+	grid-template-areas: "header header"
+						"links personalization" ;
+	grid-auto-flow: column;
+	align-items: center;
+}
+body header div.heading {
+	grid-area: header;
+	font-size: xx-large;
+}
+body header div.navigation {
+	display: grid;
+	grid-auto-flow: column;
+	column-gap: 0.25em;
+	grid-auto-columns: 1fr;
+	grid-area: links;
+}
+body header div.navigation a {
+	display: block;
+	height: auto;
+	border: 2px outset #eee;
+	padding: 4px;
+	text-decoration: none;
+	color: black;
+	text-align: center;
+}
+body header div.navigation a:hover {
+	border: 2px solid black;
+}
+body header div.personalization {
+	text-align: right;
+	margin-right: 0.25em;
+	grid-area: personalization;
+}
+body header div.personalization a {
+	color: navy;
+}
+body main {
+	clear: left;
+}
+form label {
+	clear: left;
+	float: left;
+	width: 15%;
+	text-align: right;
+	display: block;
+	padding-right: 1em;
+}
+form label + input {
+	display: block;
+	width: 75%;
+	margin-left: 15%;
+	clear: right;
+	font: caption;
+} 
+form label + input[type="checkbox"] {
+	text-align: left;
+	width: auto;
+}
+form label + span.input {
+	display: block;
+	border: 1px dashed #aaaaaa;
+	padding: 2px;
+	height: 1em;
+	margin-left: calc(15% + 1em);
+	width: 75%;
+	clear: right;
+	font: caption;
+	color: #444;
+}
+ul.itemList li div {
+	margin-left: 5em;
+	clear: right;
+}
+ul.itemList li div div.claim, ul.itemList li div div.purchase, ul.itemList li div div.ship {
+	margin: auto;
+	padding-left: 1em;
+	clear: both;
+}
+ul.itemList li label {
+	clear: left;
+	float: left;
+	width: 5em;
+	text-align: right;
+	padding-right: 1em;
+}
+ul.itemList li {
+	list-style: none;
+}

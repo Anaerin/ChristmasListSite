@@ -17,32 +17,22 @@ export default class Item extends Model {
 			description: DataTypes.STRING,
 			URL: DataTypes.STRING,
 			price: DataTypes.INTEGER,
-			isClaimed: {
-				type: DataTypes.BOOLEAN,
+			createdOn: {
+				type: DataTypes.DATE,
 				allowNull: false,
-				defaultValue: false
+				defaultValue: Sequelize.NOW
 			},
-			isPurchased: {
-				type: DataTypes.BOOLEAN,
+			lastUpdated: {
+				type: DataTypes.DATE,
 				allowNull: false,
-				defaultValue: false
-			},
-			isShipped: {
-				type: DataTypes.BOOLEAN,
-				allowNull: false,
-				defaultValue: false
-			},
-			fileName: DataTypes.STRING,
-			isFetched: {
-				type: DataTypes.BOOLEAN,
-				defaultValue: false
+				defaultValue: Sequelize.NOW
 			}
 		}, {sequelize, modelName: "Item", timestamps: false});
 	}
 	static relation(models) {
 		this.belongsTo(models.Site);
-		this.belongsTo(models.User, { as: "Claimed" });
-		this.belongsTo(models.User, { as: "Purchased" });
-		this.belongsTo(models.User, { as: "Shipped" });
+		this.belongsTo(models.User, { as: "ClaimedBy" });
+		this.belongsTo(models.User, { as: "PurchasedBy" });
+		this.belongsTo(models.User, { as: "ShippedBy" });
 	}
 }

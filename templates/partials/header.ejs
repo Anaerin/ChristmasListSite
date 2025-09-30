@@ -5,16 +5,24 @@
 	<meta http-equiv='X-UA-Compatible' content='IE=edge'>
 	<title><%=title%></title>
 	<meta name='viewport' content='width=device-width, initial-scale=1'>
-	<link rel='stylesheet' type='text/css' media='screen' href='stylesheet.css'>
+	<link rel='stylesheet' type='text/css' media='screen' href='css/stylesheet.css'>
 </head>
 <body>
 <header>
-	<div class="navigation"><a href="/">Home</a></div>
+	<div class="heading"><%=locals?.header%></div>
+	<div class="navigation">
+		<a href="<%=siteListURL%>">Home</a>
+		<% if (locals.user) { %>
+		<a href="<%=siteListURL%>myaccount">Your Account</a>
+		<% if (hasClaimedSite) { %><a href="<%=adminSiteURL%>">Your list</a><% } %>
+		<% } %>
+	</div>
 	<div class="personalization">
-	<% if (locals.userEntry) { %>
-		<div class="logoutBar">Welcome, <a href="/myaccount"><%=userEntry.name%></a>! (Not you? <a href="/logout">Logout</a>)</div>
+	<% if (locals.user) { %>
+		<div class="logoutBar">Welcome, <a href="<%=siteListURL%>myaccount"><%=user.name%></a>! (Not you? <a href="<%=siteListURL%>logout">Logout</a>)</div>
 	<% } else { %>
-		<div class="loginBar">Welcome, guest. Please <a href="/login">Log in</a><% if (registrationEnabled) { %> or <a href="/register">Register</a><% } %></div>
+		<div class="loginBar">Welcome, guest. Please <a href="<%=siteListURL%>login">Log in</a><% if (registrationEnabled) { %> or <a href="<%=siteListURL%>register">Register</a><% } %></div>
 	<% } %>
 	</div>
 </header>
+<main>

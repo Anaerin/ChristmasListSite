@@ -15,12 +15,11 @@ export default class Site extends Model {
 			},
 			subDomain: DataTypes.STRING,
 			siteName: DataTypes.STRING,
-			adminPassword: DataTypes.STRING,
 			viewPassword: DataTypes.STRING
 		}, {sequelize, modelName: "Site", timestamps: false});
 	}
 	static relation(models) {
 		this.hasMany(models.Item);
-		this.belongsTo(models.User, { as: "owner" });
+		this.belongsTo(models.User);
 	}
 }

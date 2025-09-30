@@ -18,9 +18,9 @@ export default class User extends Model {
 		}, {sequelize, modelName: "User", timestamps: false});
 	}
 	static relation(models) {
-		this.hasMany(models.Item, { as: "claimed" });
-		this.hasMany(models.Item, { as: "purchased" });
-		this.hasMany(models.Item, { as: "shipped" });
-		this.hasOne(models.Site, { as: "site" });
+		this.hasMany(models.Item, { as: "ClaimedBy" });
+		this.hasMany(models.Item, { as: "PurchasedBy" });
+		this.hasMany(models.Item, { as: "ShippedBy" });
+		this.hasOne(models.Site);
 	}
 }

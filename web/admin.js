@@ -33,13 +33,14 @@ adminRouter.post("/admin", async (req, res, next) => {
 		const age = config.timeUntilLock - (Math.floor((Date.now() - new Date(item.lastUpdated)) / 1000));
 		if (age > 0 && !item.ClaimedById) {
 			let isDirty = false;
-			if (req.body[`itemName.${item.id}]`] && req.body[`itemDescription.${item.id}`]) {
+			if (req.body[`itemName.${item.id}`] && req.body[`itemDescription.${item.id}`]) {
 				[["itemName", "name"], ["itemDescription", "description"], ["itemURL", "URL"], ["itemPrice", "price"]].forEach((field) => {
 					if (req.body[`${field[0]}.${item.id}`] && req.body[`${field[0]}.${item.id}`] !== item[field[1]]) {
 						if (field[0] == "itemPrice") {
-							if (parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10) == item.price) return;
+							const price = parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10);
+							if (price == item.price) return;
 							else {
-								item.price = parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10);
+								item.price = price;
 							}
 						} else {
 							item[field[1]] = req.body[`${field[0]}.${item.id}`];
@@ -65,7 +66,7 @@ adminRouter.post("/admin", async (req, res, next) => {
 			name: req.body["itemName.NEW"],
 			description: req.body["itemDescription.NEW"],
 			URL: req.body["itemURL.NEW"],
-			price: req.body["itemPrice.NEW"]
+			price: parseInt(parseFloat(req.body["itemPrice.NEW"]) * 100,10)
 		});
 	}
 	if (req.body.siteName && req.body.siteName !== siteObj.siteName) siteObj.siteName = req.body.siteName;

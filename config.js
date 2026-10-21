@@ -17,7 +17,8 @@ let config = {
 	sessionPassword: "A secure option for the session",
 	registrationEnabled: true,
 	baseURL: "example.com",
-	timeUntilLock: 604800 //seconds until items locked. 7 days.
+	timeUntilLock: 604800, //seconds until items locked. 7 days.
+	timeUntilPurge: 7776000 //seconds until item purgable, 90 days.
 };
 
 // If we have a config file...

@@ -67,7 +67,8 @@ form label + span.input {
 	display: block;
 	border: 1px dashed #aaaaaa;
 	padding: 2px;
-	height: 1em;
+	height: auto;
+	min-height: 1em;
 	margin-left: calc(15% + 1em);
 	width: 75%;
 	clear: right;
@@ -92,4 +93,26 @@ ul.itemList li label {
 }
 ul.itemList li {
 	list-style: none;
+	padding-left: 10em;
+	padding-top: 0.1em;
+	position: relative;
+	min-height: 7em;
+	border-top: 1px solid black;
+}
+ul.itemList li:first-child {
+	border-top: none;
+}
+ul.itemList li img {
+	position: absolute;
+	width: 10em;
+	left: 0em;
+	max-height: 5em;
+	object-fit: contain;
+
+}
+
+ul.itemList {
+	margin-left: 0;
+	padding-left: 0;
+	margin-top: 0;
 }

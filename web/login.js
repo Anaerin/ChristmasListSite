@@ -24,6 +24,7 @@ loginRouter.post("/login", async (req, res) => {
 	const postedPassword = req.body.password;
 	req.session.password = res.locals.password = postedPassword;
 	const passwordHash = createPasswordHash(postedPassword);
+	console.log(`Attempting to log in ${userName} with hash ${passwordHash}`);
 	const foundUser = await db.User.findOne({
 		where: {
 			name: userName,

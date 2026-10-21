@@ -11,14 +11,21 @@
 			<label for="itemName.<%=site.Items[i].id%>">Name</label><input type="text" name="itemName.<%=site.Items[i].id%>" id="itemName.<%=site.Items[i].id%>" value="<%=site.Items[i].name%>" required>
 			<label for="itemDescription.<%=site.Items[i].id%>">Description</label><input type="text" name="itemDescription.<%=site.Items[i].id%>" id="itemDescription.<%=site.Items[i].id%>" value="<%=site.Items[i].description%>" required>
 			<label for="itemURL.<%=site.Items[i].id%>">URL</label><input type="url" name="itemURL.<%=site.Items[i].id%>" id="itemURL.<%=site.Items[i].id%>" value="<%=site.Items[i].URL%>">
-			<label for="itemPrice.<%=site.Items[i].id%>">Price</label><input type="text" name="itemPrice.<%=site.Items[i].id%>" id="itemPrice.<%=site.Items[i].id%>" value="<% if (site.Items[i].price) { %><%=((site.Items[i].price)/100).toFixed(2) %><% } %>" pattern="\d*(\.\d{2})?">
+			<label for="itemImage.<%=site.Items[i].id%>">Image</label><input type="url" name="itemImage.<%=site.Items[i].id%>" id="itemImage.<%=site.Items[i].id%>" value="<%=site.Items[i].Image%>">
+			<!--label for="itemPrice.<%=site.Items[i].id%>">Price</label><input type="text" name="itemPrice.<%=site.Items[i].id%>" id="itemPrice.<%=site.Items[i].id%>" value="<% if (site.Items[i].price) { %><%=((site.Items[i].price)/100).toFixed(2) %><% } %>" pattern="\d*(\.\d{2})?"-->
 			<label for="itemDelete.<%=site.Items[i].id%>">Delete</label><input type="checkbox" name="itemDelete.<%=site.Items[i].id%>" id="itemDelete.<%=site.Items[i].id%>" value="true">
 			<% } else { %>
 				<legend>View Item</legend>
 			<label for="itemName.<%=site.Items[i].id%>">Name</label><span class="input"><%=site.Items[i].name%></span>
 			<label for="itemDescription.<%=site.Items[i].id%>">Description</label><span class="input"><%=site.Items[i].description%></span>
 			<label for="itemURL.<%=site.Items[i].id%>">URL</label><span class="input"><%=site.Items[i].URL%></span>
-			<label for="itemPrice.<%=site.Items[i].id%>">Price</label><span class="input"><% if (site.Items[i].price) { %><%=((site.Items[i].price)/100).toFixed(2)%><%}%></span>
+			<label for="itemImage.<%=site.Items[i].id%>">Image</label><span class="input"><%=site.Items[i].Image%></span>
+			<!--label for="itemPrice.<%=site.Items[i].id%>">Price</label><span class="input"><% if (site.Items[i].price) { %><%=((site.Items[i].price)/100).toFixed(2)%><%}%></span-->
+			<% 	if (site.Items[i].purgeable > 0) { %>
+				<span class="input">Purgeable</span>
+			<% 	} else { %>
+				<span class="input"><%=site.Items[i].agePurge%></span>
+			<% 	} %>
 			<% } %>
 		</fieldset>
 		<% } %>
@@ -27,9 +34,11 @@
 			<label for="itemName.NEW">Name</label><input type="text" name="itemName.NEW" id="itemName.NEW" value="">
 			<label for="itemDescription.NEW">Description</label><input type="text" name="itemDescription.NEW" id="itemDescription.NEW" value="">
 			<label for="itemURL.NEW">URL</label><input type="url" name="itemURL.NEW" id="itemURL.NEW" value="">
-			<label for="itemPrice.NEW">Price</label><input type="text" name="itemPrice.NEW" id="itemPrice.NEW" value="" pattern="\d*(\.\d{2})?">
+			<label for="itemImage.NEW">Image</label><input type="url" name="itemImage.NEW" id="itemImage.NEW" value="">
+			<!--label for="itemPrice.NEW">Price</label><input type="text" name="itemPrice.NEW" id="itemPrice.NEW" value="" pattern="\d*(\.\d{2})?"-->
 		</fieldset>
-		<input type="submit">
+		<input type="submit" name="submit" value="Update">
+		<input type="submit" name="submit" value="Purge Old Items">
 	</form>
 </div>
 <%- include("partials/footer"); %>

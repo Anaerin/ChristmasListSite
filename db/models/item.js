@@ -16,6 +16,7 @@ export default class Item extends Model {
 			name: DataTypes.STRING,
 			description: DataTypes.STRING,
 			URL: DataTypes.STRING,
+			Image: DataTypes.STRING,
 			price: DataTypes.INTEGER,
 			createdOn: {
 				type: DataTypes.DATE,

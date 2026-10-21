@@ -1,6 +1,6 @@
 import express from "express";
 import db from "../db/index.js";
-import { agePretty } from "../lib/utils.js";
+import { agePretty, purgePretty } from "../lib/utils.js";
 import config from "../config.js";
 const adminRouter = express.Router();
 adminRouter.get("/", async (req, res, next) => {
@@ -16,7 +16,9 @@ adminRouter.get("/admin", async (req, res, next) => {
 		res.locals.site = siteObj;
 		res.locals.site.Items.forEach((item) => {
 			item.age = config.timeUntilLock - (Math.floor((Date.now() - new Date(item.lastUpdated)) / 1000));
+			item.purgeable = config.timeUntilPurge - (Math.floor((Date.now() - new Date(item.lastUpdated)) / 86400));
 			item.agePretty = agePretty(item.age);
+			item.agePurge = purgePretty(item.purgeable);
 		});
 		res.render("listadmin");
 	} else {
@@ -31,10 +33,11 @@ adminRouter.post("/admin", async (req, res, next) => {
 	]});
 	siteObj.Items.forEach(async (item) => {
 		const age = config.timeUntilLock - (Math.floor((Date.now() - new Date(item.lastUpdated)) / 1000));
+		const purgeable = config.timeUntilPurge - (Math.floor((Date.now() - new Date(item.lastUpdated)) / 86400));
 		if (age > 0 && !item.ClaimedById) {
 			let isDirty = false;
 			if (req.body[`itemName.${item.id}`] && req.body[`itemDescription.${item.id}`]) {
-				[["itemName", "name"], ["itemDescription", "description"], ["itemURL", "URL"], ["itemPrice", "price"]].forEach((field) => {
+				[["itemName", "name"], ["itemDescription", "description"], ["itemURL", "URL"], ["itemPrice", "price"], ["itemImage", "Image"]].forEach((field) => {
 					if (req.body[`${field[0]}.${item.id}`] && req.body[`${field[0]}.${item.id}`] !== item[field[1]]) {
 						if (field[0] == "itemPrice") {
 							const price = parseInt(parseFloat(req.body[`itemPrice.${item.id}`]) * 100,10);
@@ -59,13 +62,16 @@ adminRouter.post("/admin", async (req, res, next) => {
 			}
 			if (req.body[`itemDelete.${item.id}`]) await item.destroy();
 			else if (isDirty) await item.save();
-		}
+		} else if (purgeable > 90 && req.body["submit"] == "Purge Old Items") {
+			await item.destroy();
+		};
 	});
 	if (req.body["itemName.NEW"] && req.body["itemDescription.NEW"]) {
 		await siteObj.createItem({
 			name: req.body["itemName.NEW"],
 			description: req.body["itemDescription.NEW"],
 			URL: req.body["itemURL.NEW"],
+			Image: req.body["itemImage.NEW"],
 			price: parseInt(parseFloat(req.body["itemPrice.NEW"]) * 100,10)
 		});
 	}

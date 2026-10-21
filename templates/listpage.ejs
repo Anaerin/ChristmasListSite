@@ -2,9 +2,10 @@
 <ul class="itemList">
 <% locals.site.Items.forEach((item) => { %>
 	<li>
+		<img src="<%=item.Image%>">
 		<label>Name:</label>
 		<% if (item.URL) { %>
-			<a href="<%=item.URL%>"><%=item.name%></a>
+			<a href="<%=item.URL%>" target="_blank" rel="noreferrer noopener"><%=item.name%></a>
 		<% } else { %>
 			<div class="itemName"><%=item.name%></div>
 		<% } %>

@@ -2,7 +2,11 @@
 <ul class="itemList">
 <% locals.site.Items.forEach((item) => { %>
 	<li>
-		<img src="<%=item.Image%>">
+		<% if (item.Image && item.Image.length > 0) { 
+			%><img src="<%=item.Image%>"><% 
+		} else {
+			%><img src="/images/placeholder.jpg"><%
+		} %>
 		<label>Name:</label>
 		<% if (item.URL) { %>
 			<a href="<%=item.URL%>" target="_blank" rel="noreferrer noopener"><%=item.name%></a>
